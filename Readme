@@ -1,0 +1,302 @@
+Link Checker - Vérification automatique de posts et liens
+Description
+
+Link Checker est un service Python permettant de vérifier automatiquement la présence de pseudos/mots-clés et de liens dans des posts de forums.
+
+Il peut fonctionner :
+
+    - en mode script pour traitement local
+
+    - en mode serveur Flask pour recevoir des requêtes JSON et retourner les résultats
+
+    - via Docker pour un déploiement portable et indépendant
+
+Le service utilise requests pour les vérifications simples et Selenium en mode headless comme fallback pour les contenus générés par JavaScript ou les sites lents.
+
+Fonctionnalités principales
+
+Vérification d’un pseudo/mot-clé dans un post
+
+Vérification de la présence d’un lien (URL cible) dans le post
+
+Normalisation avancée des URL pour éviter les faux négatifs
+
+Fallback avec Selenium pour les pages dynamiques
+
+Vérification asynchrone et multi-thread pour traiter de multiples posts rapidement
+
+Endpoint Flask /verify pour traitement via API
+
+Retour JSON standardisé avec les informations suivantes :
+
+{
+  "forum_url": "...",
+  "target_url": "...",
+  "keyword": "...",
+  "post_ok": true,
+  "link_ok": false
+}
+
+Installation
+Prérequis
+
+Python 3.11+
+
+pip
+
+Chrome installé (ou Chromium)
+
+Docker (optionnel pour le déploiement)
+
+Installation du projet
+
+Cloner le repository :
+
+git clone <URL_REPO>
+cd link_checker
+
+
+Créer un environnement virtuel et activer :
+
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# Linux / Mac
+source venv/bin/activate
+
+
+Installer les dépendances :
+
+pip install -r requirements.txt
+
+Utilisation en local
+Script batch
+from batch_check import batch_verify
+
+data_list = [
+    {
+        "forum_url": "https://example.com/forum/post1",
+        "target_url": "https://valore2euro.it/",
+        "keyword": "Joakin"
+    },
+    ...
+]
+
+import asyncio
+results = asyncio.run(batch_verify(data_list))
+print(results)
+
+Serveur Flask
+
+Lancer le serveur :
+
+python app.py
+
+
+Envoyer une requête POST via curl :
+
+curl -X POST http://127.0.0.1:5000/verify -H "Content-Type: application/json" -d @test_data.json
+
+
+Le fichier test_data.json doit contenir :
+
+{
+  "data": [
+    {
+      "forum_url": "https://example.com/forum/post1",
+      "target_url": "https://valore2euro.it/",
+      "keyword": "Joakin"
+    }
+  ]
+}
+
+Docker
+Construction de l’image
+docker build -t link_checker .
+
+Lancer le container
+docker run -p 5000:5000 link_checker
+
+
+Le service sera accessible sur : http://127.0.0.1:5000/verify
+
+Structure du projet
+link_checker/
+│
+├─ app.py               # Serveur Flask
+├─ batch_check.py       # Batch async pour vérification des posts/links
+├─ checker.py           # Fonctions check_post et check_link
+├─ requirements.txt
+├─ Dockerfile
+└─ README.md
+
+Notes
+
+Le nombre de threads simultanés est configurable dans batch_check.py via MAX_WORKERS.
+
+Le script gère les pages lentes ou JS via Selenium headless.
+
+Le retour JSON contient toujours les champs forum_url, target_url, keyword, post_ok et link_ok.
+
+Le service peut être intégré dans une plateforme existante via l’API Flask ou via Docker.
+
+Si tu veux, je peux te rédiger une version encore plus “pro”, avec exemples de JSON de test, commandes curl exactes pour Windows, et conseils pour Docker compose pour un déploiement multi-instance.
+
+Veux‑tu que je fasse ça ?
+
+genre pret à etre copier coller
+
+Parfait ! Voici une version complète et prête à copier-coller du README en français, directement exploitable :
+
+Link Checker - Vérification automatique de posts et liens
+Description
+
+Link Checker est un service Python permettant de vérifier automatiquement la présence de pseudos/mots-clés et de liens dans des posts de forums.
+
+Il peut fonctionner :
+
+en mode script pour traitement local
+
+en mode serveur Flask pour recevoir des requêtes JSON et retourner les résultats
+
+via Docker pour un déploiement portable et indépendant
+
+Le service utilise requests pour les vérifications simples et Selenium en mode headless comme fallback pour les contenus générés par JavaScript ou les sites lents.
+
+Fonctionnalités principales
+
+Vérification d’un pseudo/mot-clé dans un post
+
+Vérification de la présence d’un lien (URL cible) dans le post
+
+Normalisation avancée des URL pour éviter les faux négatifs
+
+Fallback avec Selenium pour les pages dynamiques
+
+Vérification asynchrone et multi-thread pour traiter de multiples posts rapidement
+
+Endpoint Flask /verify pour traitement via API
+
+Retour JSON standardisé avec les informations suivantes :
+
+{
+  "forum_url": "...",
+  "target_url": "...",
+  "keyword": "...",
+  "post_ok": true,
+  "link_ok": false
+}
+
+Installation
+Prérequis
+
+Python 3.11+
+
+pip
+
+Chrome installé (ou Chromium)
+
+Docker (optionnel pour le déploiement)
+
+Installation du projet
+
+Cloner le repository :
+
+git clone <URL_REPO>
+cd link_checker
+
+
+Créer un environnement virtuel et activer :
+
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Linux / Mac
+source venv/bin/activate
+
+
+Installer les dépendances :
+
+pip install -r requirements.txt
+
+Utilisation en local
+Script batch
+from batch_check import batch_verify
+import asyncio
+
+data_list = [
+    {
+        "forum_url": "https://example.com/forum/post1",
+        "target_url": "https://valore2euro.it/",
+        "keyword": "Joakin"
+    },
+    {
+        "forum_url": "https://example.com/forum/post2",
+        "target_url": "https://valore2euro.it/categoria-prodotto/anno/",
+        "keyword": "m1guel"
+    }
+]
+
+results = asyncio.run(batch_verify(data_list))
+print(results)
+
+Serveur Flask
+
+Lancer le serveur :
+
+python app.py
+
+
+Envoyer une requête POST via curl (Windows) :
+
+curl -X POST http://127.0.0.1:5000/verify -H "Content-Type: application/json" -d @test_data.json
+
+
+Le fichier test_data.json doit contenir :
+
+{
+  "data": [
+    {
+      "forum_url": "https://example.com/forum/post1",
+      "target_url": "https://valore2euro.it/",
+      "keyword": "Joakin"
+    },
+    {
+      "forum_url": "https://example.com/forum/post2",
+      "target_url": "https://valore2euro.it/categoria-prodotto/anno/",
+      "keyword": "m1guel"
+    }
+  ]
+}
+
+Docker
+Construction de l’image
+docker build -t link_checker .
+
+Lancer le container
+docker run -p 5000:5000 link_checker
+
+
+Le service sera accessible sur : http://127.0.0.1:5000/verify
+
+Structure du projet
+link_checker/
+│
+├─ app.py               # Serveur Flask
+├─ batch_check.py       # Batch async pour vérification des posts/links
+├─ checker.py           # Fonctions check_post et check_link
+├─ requirements.txt
+├─ Dockerfile
+└─ README.md
+
+Notes
+
+Le nombre de threads simultanés est configurable dans batch_check.py via MAX_WORKERS.
+
+Le script gère les pages lentes ou JS via Selenium headless.
+
+Le retour JSON contient toujours les champs forum_url, target_url, keyword, post_ok et link_ok.
+
+Le service peut être intégré dans une plateforme existante via l’API Flask ou via Docker.
